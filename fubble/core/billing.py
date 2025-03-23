@@ -395,14 +395,16 @@ class BillingEngine:
         )
         self.logger.info(f"Usage data for date range: {usage_by_metric}")
 
-        # Create invoice
+        # Create invoice with a unique invoice number
+        current_time = datetime.utcnow()
+        time_str = current_time.strftime('%Y%m%d%H%M%S')  # Add hours, minutes, seconds for uniqueness
+        
         invoice = Invoice(
             customer_id=customer_id,
-            invoice_number=f"INV-{datetime.utcnow().strftime('%Y%m%d')}-{customer_id}-{start_date.strftime('%Y%m%d')}",
+            invoice_number=f"INV-{time_str}-{customer_id}-{start_date.strftime('%Y%m%d')}",
             status=InvoiceStatus.DRAFT,
-            issue_date=datetime.utcnow(),
-            due_date=datetime.utcnow()
-            + timedelta(days=settings.DEFAULT_PAYMENT_TERM_DAYS),
+            issue_date=current_time,
+            due_date=current_time + timedelta(days=settings.DEFAULT_PAYMENT_TERM_DAYS),
             amount=0,  # Will be updated after calculating line items
             notes=f"Invoice for usage from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}",
         )
@@ -548,7 +550,11 @@ class BillingEngine:
 
     def generate_invoice(self, billing_period: BillingPeriod) -> Invoice:
         """
-        Generates an invoice for a billing period.
+        Generates an invoice for a subscription's billing period.
+        
+        A billing period is tied to a specific subscription, so this method generates
+        an invoice that includes subscription fees, any usage-based charges for the period,
+        and ensures all subscription-specific pricing rules (like commitments) are applied.
 
         Args:
             billing_period: The billing period to generate an invoice for.
@@ -558,19 +564,37 @@ class BillingEngine:
         """
         subscription = billing_period.subscription
         customer = subscription.customer
+        plan = subscription.plan
 
-        # Delegate to the direct date range invoice generation method
+        self.logger.info(
+            f"Generating invoice for billing period {billing_period.id} "
+            f"of subscription {subscription.id} (Plan: {plan.name}) "
+            f"for customer {customer.id} from {billing_period.start_date} to {billing_period.end_date}"
+        )
+
+        # Calculate usage for this billing period
+        usage_by_metric = self.calculate_usage_for_billing_period(billing_period)
+        self.logger.info(f"Usage data for billing period {billing_period.id}: {usage_by_metric}")
+        
+        # Generate the invoice using the core functionality
+        # We're passing the subscription_id which ensures all subscription-specific
+        # pricing rules (like commitments and subscription fees) will be applied
         invoice = self.generate_invoice_for_date_range(
             customer_id=customer.id,
             start_date=billing_period.start_date,
             end_date=billing_period.end_date,
             subscription_id=subscription.id,
         )
-
+        
+        # Enhance the invoice notes to clearly indicate this is for a billing period
+        invoice.notes = f"Invoice for subscription {subscription.id} ({plan.name}) - " \
+                        f"Billing period: {billing_period.start_date.strftime('%Y-%m-%d')} to {billing_period.end_date.strftime('%Y-%m-%d')}"
+        
         # Link billing period to invoice
         billing_period.invoice_id = invoice.id
         self.db.commit()
-
+        
+        self.logger.info(f"Generated invoice {invoice.id} for billing period {billing_period.id}")
         return invoice
 
     def _calculate_commitment_charges_for_date_range(
