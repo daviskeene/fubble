@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+sqlalchemy
+sqlalchemy-utils
+alembic
+psycopg2-binary
+pydantic
+python-jose
+passlib
+python-dateutil
+pendulum
+email-validator

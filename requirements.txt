@@ -1,0 +1,29 @@
+# Web Framework
+fastapi>=0.100.0
+uvicorn==0.24.0
+
+# Database
+sqlalchemy==2.0.39
+sqlalchemy-utils==0.41.2
+alembic==1.15.1
+psycopg2-binary==2.9.10
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Authentication
+python-jose
+passlib
+
+# Testing
+pytest
+pytest-cov
+
+# Utilities
+python-dateutil
+pendulum
+email-validator
+
+# Development
+black
+isort
+mypy
