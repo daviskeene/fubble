@@ -374,7 +374,6 @@ def generate_invoices(
 
     # Generate invoices using the date-range based approach
     billing_engine = BillingEngine(db)
-    breakpoint()
     invoices = billing_engine.generate_invoices_for_period(
         start_date=parsed_start_date,
         end_date=parsed_end_date,

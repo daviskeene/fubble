@@ -389,7 +389,6 @@ class BillingEngine:
                 f"No active subscriptions found for customer {customer_id} during period"
             )
 
-        breakpoint()
         # Get usage for the date range
         usage_by_metric = self.calculate_usage_for_date_range(
             customer_id, start_date, end_date
@@ -417,8 +416,6 @@ class BillingEngine:
         # Process each subscription
         for subscription in subscriptions:
             plan = subscription.plan
-
-            breakpoint()
 
             # Handle subscription base charges (if applicable)
             if (
@@ -466,7 +463,6 @@ class BillingEngine:
 
             # Process usage-based charges for this subscription's plan
             price_components = plan.price_components
-            breakpoint()
             for component in price_components:
                 # Skip non-usage components if we already handled them
                 if (
@@ -489,8 +485,6 @@ class BillingEngine:
                     f"Calculated: charge={charge}, unit_price={unit_price}, description={description}"
                 )
 
-                breakpoint()
-
                 # Check if this metric has a commitment that's already fulfilled
                 if component.metric_id and subscription_id:
                     metric_id = component.metric_id
@@ -507,8 +501,6 @@ class BillingEngine:
 
                         # Remove this metric from commitment charges since it's been applied
                         commitment_charges.pop(metric_id, None)
-
-                breakpoint()
                 # Create invoice item for usage-based charge
                 if charge > 0 or usage_quantity > 0:
                     invoice_item = InvoiceItem(
@@ -549,7 +541,6 @@ class BillingEngine:
 
         # Apply credits to the invoice if available
         final_amount = self._apply_credits_to_invoice(invoice, customer, total_amount)
-        breakpoint()
         invoice.amount = final_amount
 
         self.db.commit()
@@ -748,8 +739,6 @@ class BillingEngine:
                 .distinct()
                 .all()
             )
-
-            breakpoint()
 
             for customer_row in customers_with_usage:
                 customer_id = customer_row[0]
