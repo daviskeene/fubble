@@ -36,7 +36,7 @@ To use Fubble, you'll need to:
 4. Track usage events as they occur
 5. Generate invoices for billing periods
 
-All operations are performed via RESTful API endpoints. The base URL for all API requests is `/api/v1`.
+All operations are performed via RESTful API endpoints.
 
 ## Managing Customers
 
@@ -447,7 +447,7 @@ PUT /invoices/{invoice_id}/void
 
 Optional query parameter:
 ```
-reason=Duplicate invoice
+reason="Duplicate"
 ```
 
 Voids an invoice, setting its status to "void". You cannot void an invoice that has already been paid. If a reason is provided, it will be appended to the invoice notes.
@@ -461,10 +461,6 @@ GET /events/customers/{customer_id}/usage?start_date=2023-09-01T00:00:00&end_dat
 ```
 
 Returns aggregated usage by metric for the specified period.
-
-## API Reference
-
-For a complete API reference, please see the API documentation provided with your Fubble installation. You can also use the `/docs` endpoint when running Fubble locally to access the Swagger/OpenAPI documentation.
 
 ## Best Practices
 

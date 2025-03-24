@@ -41,13 +41,14 @@ class PriceComponentResponse(BaseModel):
     display_name: str
     pricing_type: str
     pricing_details: Dict[str, Any]
-    created_at: str  # ISO format date
-    updated_at: str  # ISO format date
+    created_at: str
+    updated_at: str
 
     class Config:
         orm_mode = True
         json_encoders = {datetime: lambda dt: dt.isoformat()}
 
+    # todo: handle this workaround better
     @root_validator(pre=True)
     def convert_datetimes(cls, values):
         # Handle both dictionary and model objects

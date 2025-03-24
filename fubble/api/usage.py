@@ -11,6 +11,8 @@ from fubble.core.usage import UsageManager
 router = APIRouter(prefix="/usage", tags=["usage"])
 
 
+# event_time is in ISO format, and is optional
+# if not provided, the current time is used
 class UsageEventCreate(BaseModel):
     customer_id: int
     metric_name: str

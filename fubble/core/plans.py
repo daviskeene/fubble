@@ -24,14 +24,11 @@ class PlanManager:
         """
         Creates a new pricing plan.
 
-        Args:
-            name: The name of the plan.
-            description: Description of the plan.
-            billing_frequency: Frequency of billing (monthly, quarterly, yearly).
-            price_components: List of price component specifications.
-
-        Returns:
-            The created Plan object.
+        :param name: The name of the plan.
+        :param description: Description of the plan.
+        :param billing_frequency: Frequency of billing (monthly, quarterly, yearly).
+        :param price_components: List of price component specifications.
+        :return: The created Plan object.
         """
         # Ensure valid billing frequency
         if billing_frequency not in ["monthly", "quarterly", "yearly"]:
@@ -69,11 +66,8 @@ class PlanManager:
         """
         Gets a plan by ID.
 
-        Args:
-            plan_id: The plan's ID.
-
-        Returns:
-            The Plan object if found, None otherwise.
+        :param plan_id: The plan's ID.
+        :return: The Plan object if found, None otherwise.
         """
         return self.db.query(Plan).filter(Plan.id == plan_id).first()
 
@@ -81,8 +75,7 @@ class PlanManager:
         """
         Gets all active pricing plans.
 
-        Returns:
-            List of active Plan objects.
+        :return: List of active Plan objects.
         """
         return self.db.query(Plan).filter(Plan.is_active == True).all()
 
@@ -90,12 +83,9 @@ class PlanManager:
         """
         Updates a plan's details.
 
-        Args:
-            plan_id: The plan's ID.
-            update_data: Dictionary of fields to update.
-
-        Returns:
-            The updated Plan object if found, None otherwise.
+        :param plan_id: The plan's ID.
+        :param update_data: Dictionary of fields to update.
+        :return: The updated Plan object if found, None otherwise.
         """
         plan = self.get_plan(plan_id)
         if not plan:
@@ -116,11 +106,8 @@ class PlanManager:
         """
         Deactivates a pricing plan.
 
-        Args:
-            plan_id: The plan's ID.
-
-        Returns:
-            The updated Plan object if found, None otherwise.
+        :param plan_id: The plan's ID.
+        :return: The deactivated Plan object if found, None otherwise.
         """
         plan = self.get_plan(plan_id)
         if not plan:
@@ -145,15 +132,13 @@ class PlanManager:
         """
         Adds a price component to a plan.
 
-        Args:
-            plan_id: The plan's ID.
-            metric_name: The name of the metric.
-            display_name: Display name for the metric.
-            pricing_type: Type of pricing (flat, tiered, volume, package).
-            pricing_details: Dictionary with pricing specifications.
+        :param plan_id: The plan's ID.
+        :param metric_name: The name of the metric.
+        :param display_name: Display name for the metric.
+        :param pricing_type: Type of pricing (flat, tiered, volume, package).
+        :param pricing_details: Dictionary with pricing specifications.
 
-        Returns:
-            The created PriceComponent if successful, None otherwise.
+        :return: The created PriceComponent if successful, None otherwise.
         """
         plan = self.get_plan(plan_id)
         if not plan:
@@ -182,11 +167,8 @@ class PlanManager:
         """
         Removes a price component from a plan.
 
-        Args:
-            component_id: The component's ID.
-
-        Returns:
-            True if successful, False otherwise.
+        :param component_id: The component's ID.
+        :return: True if successful, False otherwise.
         """
         component = (
             self.db.query(PriceComponent)
@@ -208,14 +190,11 @@ class PlanManager:
         """
         Helper method to create proper tiered pricing details.
 
-        Args:
-            tiers: List of tier definitions with keys:
-                  - start: Start of tier (units)
-                  - end: End of tier (units, can be None for unlimited)
-                  - price: Price per unit in this tier
-
-        Returns:
-            Pricing details dictionary for a tiered pricing component.
+        :param tiers: List of tier definitions with keys:
+            - start: Start of tier (units)
+            - end: End of tier (units, can be None for unlimited)
+            - price: Price per unit in this tier
+        :return: Pricing details dictionary for a tiered pricing component.
         """
         return {"tiers": tiers}
 
@@ -225,13 +204,10 @@ class PlanManager:
         """
         Helper method to create proper volume pricing details.
 
-        Args:
-            tiers: List of tier definitions with keys:
-                  - start: Start of tier (units)
-                  - price: Price per unit when total usage is in this tier
-
-        Returns:
-            Pricing details dictionary for a volume pricing component.
+        :param tiers: List of tier definitions with keys:
+            - start: Start of tier (units)
+            - price: Price per unit when total usage is in this tier
+        :return: Pricing details dictionary for a volume pricing component.
         """
         return {"tiers": tiers}
 
@@ -241,12 +217,9 @@ class PlanManager:
         """
         Helper method to create proper package pricing details.
 
-        Args:
-            package_size: Number of units in a package.
-            package_price: Price per package.
-
-        Returns:
-            Pricing details dictionary for a package pricing component.
+        :param package_size: Number of units in a package.
+        :param package_price: Price per package.
+        :return: Pricing details dictionary for a package pricing component.
         """
         return {"package_size": package_size, "package_price": package_price}
 
@@ -254,10 +227,7 @@ class PlanManager:
         """
         Helper method to create proper flat pricing details.
 
-        Args:
-            amount: The flat fee amount.
-
-        Returns:
-            Pricing details dictionary for a flat pricing component.
+        :param amount: The flat fee amount.
+        :return: Pricing details dictionary for a flat pricing component.
         """
         return {"amount": amount}

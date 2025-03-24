@@ -27,17 +27,14 @@ class UsageManager:
         """
         Records a usage event for a customer.
 
-        Args:
-            customer_id: The ID of the customer.
-            metric_name: The name of the metric being tracked.
-            quantity: The amount of usage to record.
-            subscription_id: Optional ID of the subscription this usage is for.
-            event_time: When the usage occurred (defaults to now).
-            properties: Additional properties/dimensions for the usage event.
-            billing_period_id: Optional billing period ID if relevant.
-
-        Returns:
-            The created UsageEvent object.
+        :param customer_id: The ID of the customer.
+        :param metric_name: The name of the metric being tracked.
+        :param quantity: The amount of usage to record.
+        :param subscription_id: Optional ID of the subscription this usage is for.
+        :param event_time: When the usage occurred (defaults to now).
+        :param properties: Additional properties/dimensions for the usage event.
+        :param billing_period_id: Optional billing period ID if relevant.
+        :return: The created UsageEvent object.
         """
         # Verify the customer exists
         customer = self.db.query(Customer).filter(Customer.id == customer_id).first()
@@ -108,14 +105,11 @@ class UsageManager:
         """
         Gets aggregated usage for a customer during a specific period.
 
-        Args:
-            customer_id: The ID of the customer.
-            start_date: Start of the period.
-            end_date: End of the period.
-            metric_name: Optional metric name to filter by.
-
-        Returns:
-            Dictionary mapping metric names to their total usage quantity.
+        :param customer_id: The ID of the customer.
+        :param start_date: Start of the period.
+        :param end_date: End of the period.
+        :param metric_name: Optional metric name to filter by.
+        :return: Dictionary mapping metric names to their total usage quantity.
         """
         # Build the query
         query = self.db.query(UsageEvent).filter(

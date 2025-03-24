@@ -24,14 +24,11 @@ class FeatureManager:
         """
         Creates a new feature in the system.
 
-        Args:
-            name: Unique identifier for the feature.
-            display_name: Human-readable name.
-            description: Description of what the feature provides.
-            is_active: Whether the feature is active.
-
-        Returns:
-            The created Feature object.
+        :param name: Unique identifier for the feature.
+        :param display_name: Human-readable name.
+        :param description: Description of what the feature provides.
+        :param is_active: Whether the feature is active.
+        :return: The created Feature object.
         """
         feature = Feature(
             name=name,
@@ -50,11 +47,8 @@ class FeatureManager:
         """
         Gets a feature by ID or name.
 
-        Args:
-            feature_id_or_name: Either the feature ID or name.
-
-        Returns:
-            The Feature object if found, None otherwise.
+        :param feature_id_or_name: Either the feature ID or name.
+        :return: The Feature object if found, None otherwise.
         """
         if isinstance(feature_id_or_name, int):
             return (
@@ -71,11 +65,8 @@ class FeatureManager:
         """
         Gets all features in the system.
 
-        Args:
-            active_only: Whether to only return active features.
-
-        Returns:
-            List of Feature objects.
+        :param active_only: Whether to only return active features.
+        :return: List of Feature objects.
         """
         query = self.db.query(Feature)
         if active_only:
@@ -88,12 +79,9 @@ class FeatureManager:
         """
         Updates a feature's details.
 
-        Args:
-            feature_id: The feature's ID.
-            update_data: Dictionary of fields to update.
-
-        Returns:
-            The updated Feature object if found, None otherwise.
+        :param feature_id: The feature's ID.
+        :param update_data: Dictionary of fields to update.
+        :return: The updated Feature object if found, None otherwise.
         """
         feature = self.get_feature(feature_id)
         if not feature:
@@ -120,14 +108,11 @@ class FeatureManager:
         """
         Assigns a feature to a pricing plan.
 
-        Args:
-            plan_id: The plan's ID.
-            feature_id: The feature's ID.
-            is_enabled: Whether the feature is enabled for this plan.
-            limits: Optional limits for this feature (e.g., max_users: 5).
-
-        Returns:
-            The created PlanFeature object if successful, None otherwise.
+        :param plan_id: The plan's ID.
+        :param feature_id: The feature's ID.
+        :param is_enabled: Whether the feature is enabled for this plan.
+        :param limits: Optional limits for this feature (e.g., max_users: 5).
+        :return: The created PlanFeature object if successful, None otherwise.
         """
         # Check if plan and feature exist
         plan = self.db.query(Plan).filter(Plan.id == plan_id).first()
@@ -174,14 +159,12 @@ class FeatureManager:
         """
         Creates or updates a feature override for a specific customer.
 
-        Args:
-            customer_id: The customer's ID.
-            feature_id: The feature's ID.
-            is_enabled: Whether the feature is enabled for this customer.
-            override_limits: Optional limits that override plan limits.
+        :param customer_id: The customer's ID.
+        :param feature_id: The feature's ID.
+        :param is_enabled: Whether the feature is enabled for this customer.
+        :param override_limits: Optional limits that override plan limits.
 
-        Returns:
-            The created/updated CustomerFeature object if successful, None otherwise.
+        :return: The created/updated CustomerFeature object if successful, None otherwise.
         """
         # Check if customer and feature exist
         customer = self.db.query(Customer).filter(Customer.id == customer_id).first()
@@ -229,12 +212,9 @@ class FeatureManager:
         """
         Checks if a customer has access to a specific feature.
 
-        Args:
-            customer_id: The customer's ID.
-            feature_name: The feature's name.
-
-        Returns:
-            Tuple of (has_access, limits) where has_access is a boolean and
+        :param customer_id: The customer's ID.
+        :param feature_name: The feature's name.
+        :return: Tuple of (has_access, limits) where has_access is a boolean and
             limits is a dictionary of any limits on the feature.
         """
         feature = self.get_feature(feature_name)

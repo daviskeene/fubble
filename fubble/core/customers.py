@@ -27,15 +27,12 @@ class CustomerManager:
         """
         Creates a new customer.
 
-        Args:
-            name: The customer's name.
-            email: The customer's email address.
-            company_name: The customer's company name.
-            billing_address: The customer's billing address.
-            payment_method_id: ID for the customer's payment method.
-
-        Returns:
-            The created Customer object.
+        :param name: The customer's name.
+        :param email: The customer's email address.
+        :param company_name: The customer's company name.
+        :param billing_address: The customer's billing address.
+        :param payment_method_id: The customer's payment method ID.
+        :return: The created Customer object.
         """
         customer = Customer(
             name=name,
@@ -55,11 +52,8 @@ class CustomerManager:
         """
         Gets a customer by ID.
 
-        Args:
-            customer_id: The customer's ID.
-
-        Returns:
-            The Customer object if found, None otherwise.
+        :param customer_id: The customer's ID.
+        :return: The Customer object if found, None otherwise.
         """
         return self.db.query(Customer).filter(Customer.id == customer_id).first()
 
@@ -67,11 +61,8 @@ class CustomerManager:
         """
         Gets a customer by email.
 
-        Args:
-            email: The customer's email address.
-
-        Returns:
-            The Customer object if found, None otherwise.
+        :param email: The customer's email address.
+        :return: The Customer object if found, None otherwise.
         """
         return self.db.query(Customer).filter(Customer.email == email).first()
 
@@ -81,12 +72,10 @@ class CustomerManager:
         """
         Updates a customer's details.
 
-        Args:
-            customer_id: The customer's ID.
-            update_data: Dictionary of fields to update.
+        :param customer_id: The customer's ID.
+        :param update_data: Dictionary of fields to update.
 
-        Returns:
-            The updated Customer object if found, None otherwise.
+        :return: The updated Customer object if found, None otherwise.
         """
         customer = self.get_customer(customer_id)
         if not customer:
@@ -113,14 +102,11 @@ class CustomerManager:
         """
         Creates a new subscription for a customer.
 
-        Args:
-            customer_id: The customer's ID.
-            plan_id: The ID of the pricing plan.
-            start_date: When the subscription starts (defaults to now).
-            end_date: When the subscription ends (None means ongoing).
-
-        Returns:
-            The created Subscription object if successful, None otherwise.
+        :param customer_id: The customer's ID.
+        :param plan_id: The ID of the pricing plan.
+        :param start_date: When the subscription starts (defaults to now).
+        :param end_date: When the subscription ends (None means ongoing).
+        :return: The created Subscription object if successful, None otherwise.
         """
         customer = self.get_customer(customer_id)
         if not customer:
@@ -157,12 +143,10 @@ class CustomerManager:
         """
         Cancels a subscription.
 
-        Args:
-            subscription_id: The subscription's ID.
-            end_date: When the subscription should end (defaults to now).
+        :param subscription_id: The subscription's ID.
+        :param end_date: When the subscription should end (defaults to now).
 
-        Returns:
-            The updated Subscription object if found, None otherwise.
+        :return: The updated Subscription object if found, None otherwise.
         """
         subscription = (
             self.db.query(Subscription)
@@ -189,11 +173,8 @@ class CustomerManager:
         """
         Gets all active subscriptions for a customer.
 
-        Args:
-            customer_id: The customer's ID.
-
-        Returns:
-            List of active Subscription objects.
+        :param customer_id: The customer's ID.
+        :return: List of active Subscription objects.
         """
         return (
             self.db.query(Subscription)
@@ -207,11 +188,8 @@ class CustomerManager:
         """
         Gets all subscriptions (active and inactive) for a customer.
 
-        Args:
-            customer_id: The customer's ID.
-
-        Returns:
-            List of all Subscription objects for the customer.
+        :param customer_id: The customer's ID.
+        :return: List of all Subscription objects for the customer.
         """
         return (
             self.db.query(Subscription)
@@ -224,7 +202,6 @@ class CustomerManager:
         """
         Gets all customers.
 
-        Returns:
-            List of all Customer objects.
+        :return: List of all Customer objects.
         """
         return self.db.query(Customer).all()

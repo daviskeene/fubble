@@ -43,7 +43,7 @@ async def root():
     return {
         "name": settings.APP_NAME,
         "version": settings.APP_VERSION,
-        "status": "running",
+        "message": "If you're reading this, the server is running!",
     }
 
 

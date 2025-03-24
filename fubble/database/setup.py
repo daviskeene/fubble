@@ -27,7 +27,7 @@ def setup_database():
 def teardown_database():
     """
     Tear down the database by dropping all tables.
-    This is typically used for testing.
+    This will typically be used for testing.
     """
     logger.info("Tearing down database...")
 

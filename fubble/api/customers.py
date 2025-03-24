@@ -11,6 +11,7 @@ from fubble.core.customers import CustomerManager
 router = APIRouter(prefix="/customers", tags=["customers"])
 
 
+# all dates are in ISO format
 class CustomerCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     email: EmailStr
@@ -29,8 +30,8 @@ class CustomerUpdate(BaseModel):
 
 class SubscriptionCreate(BaseModel):
     plan_id: int
-    start_date: Optional[str] = None  # ISO format date
-    end_date: Optional[str] = None  # ISO format date
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
 
 
 class CustomerResponse(BaseModel):
@@ -40,8 +41,8 @@ class CustomerResponse(BaseModel):
     company_name: Optional[str] = None
     billing_address: Optional[str] = None
     payment_method_id: Optional[str] = None
-    created_at: str  # ISO format date
-    updated_at: str  # ISO format date
+    created_at: str
+    updated_at: str
 
     class Config:
         orm_mode = True
@@ -83,11 +84,11 @@ class SubscriptionResponse(BaseModel):
     id: int
     customer_id: int
     plan_id: int
-    start_date: str  # ISO format date
-    end_date: Optional[str] = None  # ISO format date
+    start_date: str
+    end_date: Optional[str] = None
     is_active: bool
-    created_at: str  # ISO format date
-    updated_at: str  # ISO format date
+    created_at: str
+    updated_at: str
 
     class Config:
         orm_mode = True

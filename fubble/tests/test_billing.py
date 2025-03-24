@@ -20,7 +20,6 @@ from fubble.database.models import (
     CommitmentTier,
     CreditBalance,
     CreditStatus,
-    CreditTransaction,
 )
 
 

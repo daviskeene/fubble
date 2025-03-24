@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
@@ -8,7 +8,6 @@ from fubble.database.models import (
     InvoiceItem,
     InvoiceStatus,
     Customer,
-    BillingPeriod,
 )
 from fubble.config import settings
 
@@ -25,11 +24,8 @@ class InvoiceManager:
         """
         Gets an invoice by ID.
 
-        Args:
-            invoice_id: The invoice's ID.
-
-        Returns:
-            The Invoice object if found, None otherwise.
+        :param invoice_id: The invoice's ID.
+        :return: The Invoice object if found, None otherwise.
         """
         return self.db.query(Invoice).filter(Invoice.id == invoice_id).first()
 
@@ -39,12 +35,10 @@ class InvoiceManager:
         """
         Gets invoices for a customer, optionally filtered by status.
 
-        Args:
-            customer_id: The customer's ID.
-            status: Optional invoice status to filter by.
+        :param customer_id: The customer's ID.
+        :param status: Optional invoice status to filter by.
 
-        Returns:
-            List of Invoice objects.
+        :return: List of Invoice objects.
         """
         query = self.db.query(Invoice).filter(Invoice.customer_id == customer_id)
 
@@ -57,11 +51,8 @@ class InvoiceManager:
         """
         Gets all invoices with a specific status.
 
-        Args:
-            status: The invoice status to filter by.
-
-        Returns:
-            List of Invoice objects.
+        :param status: The invoice status to filter by.
+        :return: List of Invoice objects.
         """
         return (
             self.db.query(Invoice)
@@ -74,12 +65,9 @@ class InvoiceManager:
         """
         Updates an invoice's status.
 
-        Args:
-            invoice_id: The invoice's ID.
-            status: The new status.
-
-        Returns:
-            The updated Invoice object if found, None otherwise.
+        :param invoice_id: The invoice's ID.
+        :param status: The new status.
+        :return: The updated Invoice object if found, None otherwise.
         """
         invoice = self.get_invoice(invoice_id)
         if not invoice:
@@ -113,16 +101,13 @@ class InvoiceManager:
         """
         Adds an item to an invoice.
 
-        Args:
-            invoice_id: The invoice's ID.
-            description: Description of the item.
-            amount: Total amount for the item.
-            quantity: Optional quantity.
-            metric_name: Optional metric name.
-            unit_price: Optional unit price.
-
-        Returns:
-            The created InvoiceItem if successful, None otherwise.
+        :param invoice_id: The invoice's ID.
+        :param description: Description of the item.
+        :param amount: Total amount for the item.
+        :param quantity: Optional quantity.
+        :param metric_name: Optional metric name.
+        :param unit_price: Optional unit price.
+        :return: The created InvoiceItem if successful, None otherwise.
         """
         invoice = self.get_invoice(invoice_id)
         if not invoice:
@@ -163,11 +148,8 @@ class InvoiceManager:
         """
         Removes an item from an invoice.
 
-        Args:
-            item_id: The invoice item's ID.
-
-        Returns:
-            True if successful, False otherwise.
+        :param item_id: The invoice item's ID.
+        :return: True if successful, False otherwise.
         """
         item = self.db.query(InvoiceItem).filter(InvoiceItem.id == item_id).first()
 
@@ -192,11 +174,8 @@ class InvoiceManager:
         """
         Finalizes an invoice, changing its status from draft to pending.
 
-        Args:
-            invoice_id: The invoice's ID.
-
-        Returns:
-            The updated Invoice object if successful, None otherwise.
+        :param invoice_id: The invoice's ID.
+        :return: The updated Invoice object if successful, None otherwise.
         """
         invoice = self.get_invoice(invoice_id)
         if not invoice or invoice.status != InvoiceStatus.DRAFT:
@@ -216,12 +195,9 @@ class InvoiceManager:
         """
         Voids an invoice.
 
-        Args:
-            invoice_id: The invoice's ID.
-            reason: Optional reason for voiding.
-
-        Returns:
-            The updated Invoice object if successful, None otherwise.
+        :param invoice_id: The invoice's ID.
+        :param reason: Optional reason for voiding.
+        :return: The updated Invoice object if successful, None otherwise.
         """
         invoice = self.get_invoice(invoice_id)
         if not invoice or invoice.status == InvoiceStatus.PAID:
@@ -248,14 +224,12 @@ class InvoiceManager:
         """
         Creates an empty invoice for a customer.
 
-        Args:
-            customer_id: The customer's ID.
-            issue_date: When the invoice is issued (defaults to now).
-            due_date: When the invoice is due (defaults to issue_date + payment term).
-            notes: Optional notes for the invoice.
+        :param customer_id: The customer's ID.
+        :param issue_date: When the invoice is issued (defaults to now).
+        :param due_date: When the invoice is due (defaults to issue_date + payment term).
+        :param notes: Optional notes for the invoice.
 
-        Returns:
-            The created Invoice object if successful, None otherwise.
+        :return: The created Invoice object if successful, None otherwise.
         """
         # Check if customer exists
         customer = self.db.query(Customer).filter(Customer.id == customer_id).first()

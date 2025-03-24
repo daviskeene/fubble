@@ -10,7 +10,6 @@ from fubble.database.models import (
     Invoice,
     InvoiceItem,
     InvoiceStatus,
-    Plan,
     PriceComponent,
     PricingType,
     Subscription,
@@ -40,13 +39,10 @@ class BillingEngine:
         """
         Calculates total usage for each metric in a date range for a specific customer.
 
-        Args:
-            customer_id: The ID of the customer to calculate usage for.
-            start_date: The start date of the period.
-            end_date: The end date of the period.
-
-        Returns:
-            A dictionary mapping metric names to their total usage quantity.
+        :param customer_id: The ID of the customer to calculate usage for.
+        :param start_date: The start date of the period.
+        :param end_date: The end date of the period.
+        :return: A dictionary mapping metric names to their total usage quantity.
         """
         # Modified query to handle both subscription-based and direct usage events
         usage_events_query = self.db.query(UsageEvent).filter(
@@ -76,11 +72,8 @@ class BillingEngine:
         """
         Calculates total usage for each metric in a billing period.
 
-        Args:
-            billing_period: The billing period to calculate usage for.
-
-        Returns:
-            A dictionary mapping metric names to their total usage quantity.
+        :param billing_period: The billing period to calculate usage for.
+        :return: A dictionary mapping metric names to their total usage quantity.
         """
         # Get the customer ID from the subscription
         customer_id = billing_period.subscription.customer_id
@@ -98,12 +91,9 @@ class BillingEngine:
         """
         Calculates the charge for a specific price component based on usage.
 
-        Args:
-            component: The price component to calculate charges for.
-            usage_quantity: The quantity of usage for this component.
-
-        Returns:
-            A tuple containing (total_charge, unit_price, description)
+        :param component: The price component to calculate charges for.
+        :param usage_quantity: The quantity of usage for this component.
+        :return: A tuple containing (total_charge, unit_price, description)
         """
         pricing_details = component.pricing_details
 
@@ -340,14 +330,11 @@ class BillingEngine:
         """
         Generates an invoice for a customer based on usage within a date range.
 
-        Args:
-            customer_id: The ID of the customer.
-            start_date: The start date of the period.
-            end_date: The end date of the period.
-            subscription_id: Optional subscription ID to associate with this invoice.
-
-        Returns:
-            The created invoice object.
+        :param customer_id: The ID of the customer.
+        :param start_date: The start date of the period.
+        :param end_date: The end date of the period.
+        :param subscription_id: Optional subscription ID to associate with this invoice.
+        :return: The created invoice object.
         """
         # Get the customer
         customer = self.db.query(Customer).filter(Customer.id == customer_id).first()
@@ -558,11 +545,8 @@ class BillingEngine:
         an invoice that includes subscription fees, any usage-based charges for the period,
         and ensures all subscription-specific pricing rules (like commitments) are applied.
 
-        Args:
-            billing_period: The billing period to generate an invoice for.
-
-        Returns:
-            The created invoice object.
+        :param billing_period: The billing period to generate an invoice for.
+        :return: The created invoice object.
         """
         subscription = billing_period.subscription
         customer = subscription.customer
@@ -611,14 +595,11 @@ class BillingEngine:
         """
         Calculate charges based on minimum commitments for a subscription within a date range.
 
-        Args:
-            subscription: The subscription to check for commitments.
-            start_date: The start date of the period.
-            end_date: The end date of the period.
-            usage_by_metric: Current usage by metric.
-
-        Returns:
-            Dictionary mapping metric_ids to minimum commitment charges.
+        :param subscription: The subscription to check for commitments.
+        :param start_date: The start date of the period.
+        :param end_date: The end date of the period.
+        :param usage_by_metric: Current usage by metric.
+        :return: Dictionary mapping metric_ids to minimum commitment charges.
         """
         commitment_charges = {}
 
@@ -675,13 +656,10 @@ class BillingEngine:
         """
         Apply available credits to an invoice.
 
-        Args:
-            invoice: The invoice to apply credits to.
-            customer: The customer who owns the credits.
-            total_amount: The total invoice amount before credits.
-
-        Returns:
-            The final invoice amount after applying credits.
+        :param invoice: The invoice to apply credits to.
+        :param customer: The customer who owns the credits.
+        :param total_amount: The total invoice amount before credits.
+        :return: The final invoice amount after applying credits.
         """
         # Get active credits for this customer, ordered by expiration date (soonest first)
         active_credits = (
@@ -743,54 +721,18 @@ class BillingEngine:
         self,
         start_date: datetime,
         end_date: datetime,
-        customer_id: Optional[int] = None,
+        customer_id: int,
     ) -> List[Invoice]:
         """
         Generates invoices for all billing periods or directly by date range within a date range.
 
-        Args:
-            start_date: The start date for the invoice period.
-            end_date: The end date for the invoice period.
-            customer_id: Optional customer ID to limit to a specific customer.
-
-        Returns:
-            A list of generated invoices.
+        :param start_date: The start date for the invoice period.
+        :param end_date: The end date for the invoice period.
+        :param customer_id: The customer ID to generate invoices for.
+        :return: A list of generated invoices.
         """
         invoices = []
-        # If no customer specified or billing periods found, we might want to generate
-        # invoices directly for customers who don't have billing periods but have usage
-        if not customer_id:
-            # Find customers with usage in this period but no billing periods
-            customers_with_usage = (
-                self.db.query(Customer.id)
-                .join(UsageEvent, Customer.id == UsageEvent.customer_id)
-                .filter(
-                    UsageEvent.event_time >= start_date,
-                    UsageEvent.event_time <= end_date,
-                )
-                .distinct()
-                .all()
-            )
-
-            for customer_row in customers_with_usage:
-                customer_id = customer_row[0]
-
-                # Check if this customer already has an invoice from a billing period in this range
-                customer_has_invoice = False
-                for invoice in invoices:
-                    if invoice.customer_id == customer_id:
-                        customer_has_invoice = True
-                        break
-
-                if not customer_has_invoice:
-                    # Generate a pure usage-based invoice for this customer
-                    invoice = self.generate_invoice_for_date_range(
-                        customer_id, start_date, end_date
-                    )
-                    invoices.append(invoice)
-
-        # If a specific customer is requested and no billing periods found, generate a direct invoice
-        elif customer_id:
+        if customer_id:
             # Check if customer exists
             customer = (
                 self.db.query(Customer).filter(Customer.id == customer_id).first()
@@ -801,6 +743,9 @@ class BillingEngine:
                     customer_id, start_date, end_date
                 )
                 invoices.append(invoice)
+        else:
+            # Customer ID should be specified
+            raise ValueError("Customer ID must be specified")
 
         return invoices
 
@@ -808,11 +753,8 @@ class BillingEngine:
         """
         Creates billing periods for a subscription based on its billing frequency.
 
-        Args:
-            subscription: The subscription to create billing periods for.
-
-        Returns:
-            A list of created billing periods.
+        :param subscription: The subscription to create billing periods for.
+        :return: A list of created billing periods.
         """
         plan = subscription.plan
         start_date = subscription.start_date

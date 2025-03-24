@@ -33,17 +33,13 @@ class CreditManager:
         """
         Adds credits to a customer's account.
 
-        Args:
-            customer_id: The customer's ID.
-            amount: The amount of credits to add.
-            credit_type: Type of credit (prepaid, refund, promotional, adjustment).
-            description: Optional description of the credit.
-            expires_in_days: Optional number of days until expiration.
-            subscription_id: Optional associated subscription ID.
-            invoice_id: Optional associated invoice ID.
-
-        Returns:
-            The created CreditBalance object if successful, None otherwise.
+        :param customer_id: The customer's ID.
+        :param amount: The amount of credits to add.
+        :param credit_type: Type of credit (prepaid, refund, promotional, adjustment).
+        :param description: Optional description of the credit.
+        :param expires_in_days: Optional number of days until expiration.
+        :param subscription_id: Optional associated subscription ID.
+        :param invoice_id: Optional associated invoice ID.
         """
         # Validate customer exists
         customer = self.db.query(Customer).filter(Customer.id == customer_id).first()
@@ -95,11 +91,8 @@ class CreditManager:
         """
         Gets the total active credit balance for a customer.
 
-        Args:
-            customer_id: The customer's ID.
-
-        Returns:
-            The total remaining active credit amount.
+        :param customer_id: The customer's ID.
+        :return: The total remaining active credit amount.
         """
         # Get all active credits for the customer
         active_credits = (
@@ -127,12 +120,9 @@ class CreditManager:
         """
         Gets all credit balances for a customer.
 
-        Args:
-            customer_id: The customer's ID.
-            include_expired: Whether to include expired/consumed credits.
-
-        Returns:
-            List of CreditBalance objects.
+        :param customer_id: The customer's ID.
+        :param include_expired: Whether to include expired/consumed credits.
+        :return: List of CreditBalance objects.
         """
         query = self.db.query(CreditBalance).filter(
             CreditBalance.customer_id == customer_id
@@ -159,14 +149,11 @@ class CreditManager:
         """
         Manually applies credits from a customer's balance.
 
-        Args:
-            customer_id: The customer's ID.
-            amount: The amount of credits to apply.
-            description: Description of the application.
-            invoice_id: Optional invoice ID to associate with the transaction.
-
-        Returns:
-            True if successful, False otherwise.
+        :param customer_id: The customer's ID.
+        :param amount: The amount of credits to apply.
+        :param description: Description of the application.
+        :param invoice_id: Optional invoice ID to associate with the transaction.
+        :return: True if successful, False otherwise.
         """
         # Check if customer has enough credits
         available_credits = self.get_customer_credit_balance(customer_id)
@@ -223,8 +210,7 @@ class CreditManager:
         """
         Expires credits that have passed their expiration date.
 
-        Returns:
-            Number of credit balances that were expired.
+        :return: Number of credit balances that were expired.
         """
         now = datetime.utcnow()
 

@@ -26,15 +26,12 @@ class EventTracker:
         """
         Records a new usage event for a customer.
 
-        Args:
-            customer_id: The ID of the customer.
-            metric_name: The name of the metric being tracked (e.g., "api_calls", "storage_gb").
-            quantity: The quantity of usage.
-            event_time: The time the event occurred (defaults to now).
-            properties: Additional properties to store with the event.
-
-        Returns:
-            The created UsageEvent object.
+        :param customer_id: The ID of the customer.
+        :param metric_name: The name of the metric being tracked (e.g., "api_calls", "storage_gb").
+        :param quantity: The quantity of usage.
+        :param event_time: The time the event occurred (defaults to now).
+        :param properties: Additional properties to store with the event.
+        :return: The created UsageEvent object.
         """
         if event_time is None:
             event_time = datetime.utcnow()
@@ -64,16 +61,13 @@ class EventTracker:
         """
         Records multiple usage events in a batch.
 
-        Args:
-            events: List of event dictionaries with keys:
-                   - customer_id: ID of the customer
-                   - metric_name: Name of the metric
-                   - quantity: Quantity of usage
-                   - event_time: (Optional) Time of the event
-                   - properties: (Optional) Additional properties
-
-        Returns:
-            List of created UsageEvent objects.
+        :param events: List of event dictionaries with keys:
+            - customer_id: ID of the customer
+            - metric_name: Name of the metric
+            - quantity: Quantity of usage
+            - event_time: (Optional) Time of the event
+            - properties: (Optional) Additional properties
+        :return: List of created UsageEvent objects.
         """
         created_events = []
 
@@ -100,17 +94,13 @@ class EventTracker:
         self, customer_id: int, start_date: datetime, end_date: datetime
     ) -> Dict[str, float]:
         """
-        Get total usage by metric for a customer in a given time period.
+        Get total usage by metric for a customer in a given time period
 
-        Args:
-            customer_id: The ID of the customer.
-            start_date: The start of the period.
-            end_date: The end of the period.
-
-        Returns:
-            A dictionary mapping metric names to total usage.
+        :param customer_id: The ID of the customer.
+        :param start_date: The start of the period.
+        :param end_date: The end of the period.
+        :return: A dictionary mapping metric names to total usage.
         """
-        # Using SQLAlchemy for aggregation
         result = (
             self.db.query(
                 UsageEvent.metric_name, func.sum(UsageEvent.quantity).label("total")
@@ -135,12 +125,9 @@ class EventTracker:
         """
         Finds the appropriate billing period for a customer at a given time.
 
-        Args:
-            customer_id: The ID of the customer.
-            event_time: The time to find a billing period for.
-
-        Returns:
-            The matching BillingPeriod or None if not found.
+        :param customer_id: The ID of the customer.
+        :param event_time: The time to find a billing period for.
+        :return: The matching BillingPeriod or None if not found.
         """
         # First, verify customer exists
         customer = self.db.query(Customer).filter(Customer.id == customer_id).first()

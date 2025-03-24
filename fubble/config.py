@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # Application settings
+    # Application settings, just examples of what a config may look like
     APP_NAME: str = "FUBBLE"
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = os.getenv("DEBUG", "False").lower() in ("true", "1", "t")

@@ -16,7 +16,7 @@ class EventCreate(BaseModel):
     customer_id: int
     metric_name: str = Field(..., min_length=1, max_length=255)
     quantity: float = Field(..., gt=0)
-    event_time: Optional[str] = None  # ISO format date
+    event_time: Optional[str] = None
     properties: Optional[Dict[str, Any]] = None
 
 
@@ -30,12 +30,12 @@ class EventResponse(BaseModel):
     billing_period_id: Optional[int]
     metric_name: str
     quantity: float
-    event_time: str  # ISO format date
+    event_time: str
     properties: Optional[Dict[str, Any]]
-    created_at: str  # ISO format date
+    created_at: str
 
     class Config:
-        orm_mode = True  # For Pydantic v1
+        orm_mode = True
 
     @root_validator(pre=True)
     def convert_datetime_to_str(cls, values):
@@ -94,7 +94,7 @@ def track_event(event_data: EventCreate, db: Session = Depends(get_db)):
         properties=event_data.properties,
     )
 
-    # Convert datetime fields to strings manually
+    # Convert datetime fields to strings
     event_dict = {
         "id": event.id,
         "customer_id": event.customer_id,

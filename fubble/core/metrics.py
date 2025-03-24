@@ -28,18 +28,15 @@ class MetricManager:
         """
         Creates a new metric in the registry.
 
-        Args:
-            name: Unique identifier for the metric.
-            display_name: Human-readable name.
-            description: Description of what the metric measures.
-            unit: The unit of measurement (e.g., "MB", "API calls").
-            metric_type: Type of metric (counter, gauge, dimension, time, composite).
-            aggregation_type: How to aggregate this metric (sum, max, min, avg, last).
-            formula: For composite metrics, the formula to calculate it.
-            display_properties: Properties for displaying the metric.
-
-        Returns:
-            The created Metric object.
+        :param name: Unique identifier for the metric.
+        :param display_name: Human-readable name.
+        :param description: Description of what the metric measures.
+        :param unit: The unit of measurement (e.g., "MB", "API calls").
+        :param metric_type: Type of metric (counter, gauge, dimension, time, composite).
+        :param aggregation_type: How to aggregate this metric (sum, max, min, avg, last).
+        :param formula: For composite metrics, the formula to calculate it.
+        :param display_properties: Properties for displaying the metric.
+        :return: The created Metric object.
         """
         # Validate metric type
         if metric_type not in [t.value for t in MetricType]:
@@ -75,11 +72,8 @@ class MetricManager:
         """
         Gets a metric by ID or name.
 
-        Args:
-            metric_id_or_name: Either the metric ID or name.
-
-        Returns:
-            The Metric object if found, None otherwise.
+        :param metric_id_or_name: Either the metric ID or name.
+        :return: The Metric object if found, None otherwise.
         """
         if isinstance(metric_id_or_name, int):
             return self.db.query(Metric).filter(Metric.id == metric_id_or_name).first()
@@ -92,8 +86,7 @@ class MetricManager:
         """
         Gets all metrics in the registry.
 
-        Returns:
-            List of all Metric objects.
+        :return: List of all Metric objects.
         """
         return self.db.query(Metric).all()
 
@@ -103,12 +96,9 @@ class MetricManager:
         """
         Updates a metric's details.
 
-        Args:
-            metric_id: The metric's ID.
-            update_data: Dictionary of fields to update.
-
-        Returns:
-            The updated Metric object if found, None otherwise.
+        :param metric_id: The metric's ID.
+        :param update_data: Dictionary of fields to update.
+        :return: The updated Metric object if found, None otherwise.
         """
         metric = self.get_metric(metric_id)
         if not metric:
@@ -129,11 +119,8 @@ class MetricManager:
         """
         Deletes a metric from the registry.
 
-        Args:
-            metric_id: The metric's ID.
-
-        Returns:
-            True if successful, False otherwise.
+        :param metric_id: The metric's ID.
+        :return: True if successful, False otherwise.
         """
         metric = self.get_metric(metric_id)
         if not metric:
@@ -156,13 +143,11 @@ class MetricManager:
         """
         Calculates the value of a composite metric based on its formula.
 
-        Args:
-            metric: The composite metric to calculate.
-            input_values: Dictionary mapping metric names to their values.
-            execution_context: Additional context for formula execution.
+        :param metric: The composite metric to calculate.
+        :param input_values: Dictionary mapping metric names to their values.
+        :param execution_context: Additional context for formula execution.
 
-        Returns:
-            The calculated value.
+        :return: The calculated value.
         """
         if metric.type != MetricType.COMPOSITE:
             raise ValueError(f"Metric {metric.name} is not a composite metric")
@@ -196,8 +181,9 @@ class MetricManager:
 
             # Evaluate the expression
             try:
-                # Note: Using eval is potentially dangerous in production.
-                # In a real system, use a safer expression parser.
+                # TODO: use a safer expression parser.
+                # This is a hack to get the formula to work, super unsafe,
+                # I'm sorry if you're reading this.
                 return eval(expression_with_values)
             except Exception as e:
                 raise ValueError(f"Error evaluating formula: {str(e)}")

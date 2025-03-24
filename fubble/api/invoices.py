@@ -24,8 +24,8 @@ class InvoiceItemCreate(BaseModel):
 
 class InvoiceCreate(BaseModel):
     customer_id: int
-    issue_date: Optional[str] = None  # ISO format date
-    due_date: Optional[str] = None  # ISO format date
+    issue_date: Optional[str] = None
+    due_date: Optional[str] = None
     notes: Optional[str] = None
     items: Optional[List[InvoiceItemCreate]] = None
 
@@ -38,12 +38,13 @@ class InvoiceItemResponse(BaseModel):
     quantity: Optional[float]
     unit_price: float
     amount: float
-    created_at: str  # ISO format date
+    created_at: str
 
     class Config:
         orm_mode = True
         json_encoders = {datetime: lambda dt: dt.isoformat()}
 
+    # i really don't like this, but it's a workaround for the fact that the database fields are not always strings
     @root_validator(pre=True)
     def convert_datetimes(cls, values):
         # Handle both dictionary and model objects
@@ -81,13 +82,13 @@ class InvoiceResponse(BaseModel):
     customer_id: int
     invoice_number: str
     status: str
-    issue_date: str  # ISO format date
-    due_date: str  # ISO format date
+    issue_date: str
+    due_date: str
     amount: float
-    paid_date: Optional[str]  # ISO format date
+    paid_date: Optional[str]
     notes: Optional[str]
-    created_at: str  # ISO format date
-    updated_at: str  # ISO format date
+    created_at: str
+    updated_at: str
     invoice_items: List[InvoiceItemResponse]
 
     class Config:
@@ -377,7 +378,7 @@ def generate_invoices(
     invoices = billing_engine.generate_invoices_for_period(
         start_date=parsed_start_date,
         end_date=parsed_end_date,
-        customer_id=customer_id,  # Pass the customer_id to the billing engine
+        customer_id=customer_id,
     )
 
     logger.info(f"Generated {len(invoices)} invoices for the period")

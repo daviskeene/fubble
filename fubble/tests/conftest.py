@@ -11,7 +11,7 @@ from fubble.app import app
 @pytest.fixture(scope="function")
 def test_db_session():
     """Create a clean database session for testing."""
-    # Standard way to create in-memory SQLite
+    # create in-memory SQLite database
     engine = create_engine(
         "sqlite:///:memory:", connect_args={"check_same_thread": False}
     )
