@@ -249,7 +249,7 @@ class FubbleDemo:
         logger.info("Creating subscriptions for consumers...")
 
         # Current date for subscription start
-        now = datetime.now()
+        now = datetime.utcnow()
         start_date = (now - timedelta(days=30)).isoformat()
 
         # Consumer 1 subscribes to the Basic plan
@@ -300,7 +300,7 @@ class FubbleDemo:
         logger.info("Simulating API usage events over the past 30 days...")
 
         # Set up simulation period
-        end_date = datetime.now()
+        end_date = datetime.utcnow()
         start_date = end_date - timedelta(days=30)
 
         current_date = start_date
@@ -448,7 +448,7 @@ class FubbleDemo:
         logger.info("Generating invoices for the simulated usage period...")
 
         # Calculate invoice period (last 30 days)
-        end_date = datetime.now()
+        end_date = datetime.utcnow()
         start_date = end_date - timedelta(days=30)
 
         # Get usage summaries for each consumer

@@ -23,6 +23,7 @@ const UsageSummary: React.FC<UsageSummaryProps> = ({ customerId }) => {
     const now = new Date();
     const oneMonthAgo = new Date(now);
     oneMonthAgo.setDate(now.getDate() - 30);
+    oneMonthAgo.setHours(0, 0, 0, 0);
     
     // Format dates properly - API expects ISO format without Z suffix
     // No need to encode here as the API service will handle that
