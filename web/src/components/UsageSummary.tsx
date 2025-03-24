@@ -22,7 +22,7 @@ const UsageSummary: React.FC<UsageSummaryProps> = ({ customerId }) => {
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
     const oneMonthAgo = new Date(now);
-    oneMonthAgo.setMonth(now.getMonth() - 1);
+    oneMonthAgo.setDate(now.getDate() - 30);
     
     // Format dates properly - API expects ISO format without Z suffix
     // No need to encode here as the API service will handle that
@@ -33,7 +33,7 @@ const UsageSummary: React.FC<UsageSummaryProps> = ({ customerId }) => {
       startDate: start, 
       endDate: end 
     };
-  }, [/* empty dependencies means this only runs once */]);
+  }, []);
   
   const { data: usageSummary, isLoading, isError } = useUsageSummary(customerId, startDate, endDate);
   

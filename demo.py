@@ -300,8 +300,9 @@ class FubbleDemo:
         logger.info("Simulating API usage events over the past 30 days...")
 
         # Set up simulation period
-        end_date = datetime.utcnow()
+        end_date = datetime.now()
         start_date = end_date - timedelta(days=30)
+
         current_date = start_date
 
         # Create random events throughout the period
