@@ -65,7 +65,6 @@ class Customer(Base):
     subscriptions = relationship("Subscription", back_populates="customer")
     invoices = relationship("Invoice", back_populates="customer")
     usage_events = relationship("UsageEvent", back_populates="customer")
-    customer_features = relationship("CustomerFeature", back_populates="customer")
     credit_balances = relationship("CreditBalance", back_populates="customer")
 
 
@@ -83,7 +82,6 @@ class Plan(Base):
     # Relationships
     price_components = relationship("PriceComponent", back_populates="plan")
     subscriptions = relationship("Subscription", back_populates="plan")
-    plan_features = relationship("PlanFeature", back_populates="plan")
 
 
 class PriceComponent(Base):
@@ -244,54 +242,6 @@ class Metric(Base):
     price_components = relationship("PriceComponent", back_populates="metric")
     usage_events = relationship("UsageEvent", back_populates="metric")
     commitment_tiers = relationship("CommitmentTier", back_populates="metric")
-
-
-class Feature(Base):
-    __tablename__ = "features"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255), nullable=False, unique=True)
-    display_name = Column(String(255), nullable=False)
-    description = Column(Text)
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    # Relationships
-    plan_features = relationship("PlanFeature", back_populates="feature")
-    customer_features = relationship("CustomerFeature", back_populates="feature")
-
-
-class PlanFeature(Base):
-    __tablename__ = "plan_features"
-
-    id = Column(Integer, primary_key=True, index=True)
-    plan_id = Column(Integer, ForeignKey("plans.id"), nullable=False)
-    feature_id = Column(Integer, ForeignKey("features.id"), nullable=False)
-    is_enabled = Column(Boolean, default=True)
-    limits = Column(JSON)  # Optional limits for this feature (e.g., max_users: 5)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    # Relationships
-    plan = relationship("Plan", back_populates="plan_features")
-    feature = relationship("Feature", back_populates="plan_features")
-
-
-class CustomerFeature(Base):
-    __tablename__ = "customer_features"
-
-    id = Column(Integer, primary_key=True, index=True)
-    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
-    feature_id = Column(Integer, ForeignKey("features.id"), nullable=False)
-    is_enabled = Column(Boolean, default=True)
-    override_limits = Column(JSON)  # Override default limits from plan
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    # Relationships
-    customer = relationship("Customer", back_populates="customer_features")
-    feature = relationship("Feature", back_populates="customer_features")
-
 
 class CreditType(str, Enum):
     PREPAID = "prepaid"

@@ -52,23 +52,6 @@ npm run dev
 4. Generate invoices for a specific time period
 5. View detailed invoices with line items
 
-## Project Structure
-
-- `/src/components` - React components
-- `/src/hooks` - Custom React Query hooks for data fetching
-- `/src/pages` - Page components
-- `/src/services` - API service modules
-- `/src/types` - TypeScript type definitions
-
-## API Integration
-
-The demo integrates with the following Fubble API endpoints:
-
-- `/customers` - Customer management
-- `/plans` - Pricing plan configuration
-- `/events` - Usage event recording and tracking
-- `/invoices` - Invoice generation and retrieval
-
 ## Demo Environment
 
 The web demo is pre-configured to work with a demo environment that includes:
@@ -77,4 +60,5 @@ The web demo is pre-configured to work with a demo environment that includes:
 - Predefined pricing plans (Basic and Premium)
 - Subscriptions connecting customers to plans
 
-To modify the demo environment, edit the configuration files or use the API directly.
+To modify the demo environment, edit the configuration files or use the API directly. It's best to use
+the `demo.py` script in the `fubble` app directory.
