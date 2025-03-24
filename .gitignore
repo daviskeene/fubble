@@ -3,3 +3,4 @@ fubble.egg-info
 .DS_Store
 .venv
 .env
+fubble.db
