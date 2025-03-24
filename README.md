@@ -45,6 +45,13 @@ python3 -m fubble.database.setup
 python3 -m fubble.app
 ```
 
+6. Start the frontend server (optional)
+
+Best to do this after running `python3 demo.py`. Open a new terminal and start the npm server:
+```bash
+cd web && npm i && npm run dev
+```
+
 ## Usage Examples
 
 FUBBLE provides a flexible framework for implementing usage-based billing in your application. Here's how you can use it:

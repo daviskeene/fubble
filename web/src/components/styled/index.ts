@@ -360,6 +360,7 @@ export const DashboardTitle = styled.h1`
   color: #1e293b;
   margin: 0;
   font-weight: 600;
+  text-align: center;
   
   @media (min-width: 768px) {
     font-size: 2rem;
