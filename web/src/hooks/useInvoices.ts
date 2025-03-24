@@ -35,7 +35,8 @@ export const useGenerateInvoices = (customerId: string) => {
     mutationFn: ({ startDate, endDate }: { startDate: string; endDate: string }) => 
       api.generateInvoices(startDate, endDate, customerId),
     onSuccess: () => {
-      // Invalidate all invoice-related queries to ensure real-time updates
+      // Invalidate all invoice-related queries
+      // Yes onsuccess is deprecated but it's what im familiar with
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       queryClient.invalidateQueries({ 
         queryKey: ['customerInvoices'] 

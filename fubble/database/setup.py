@@ -44,5 +44,6 @@ def full_teardown_database():
     teardown_database()
     setup_database()
 
+
 if __name__ == "__main__":
     setup_database()

@@ -23,6 +23,7 @@ export const FlexContainer = styled.div`
 
 export const FlexColumn = styled.div<{ width?: string; cols?: number }>`
   /* If cols is provided, calculate percentage width based on 24-column grid */
+  /* Mock antd's grid system since its what im familiar with */
   flex: ${props => props.cols ? 'none' : (props.width || '1')};
   width: ${props => props.cols ? `calc(${(props.cols / 24) * 100}% - 1.5rem)` : '100%'};
   min-width: ${props => props.cols ? '0' : '300px'};

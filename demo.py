@@ -15,7 +15,8 @@ from datetime import datetime, timedelta
 import random
 import logging
 
-from fubble.database.setup import full_teardown_database
+from fubble.database.connection import get_db
+from fubble.database.models import Customer, Plan, Subscription, UsageEvent, Invoice, PriceComponent, InvoiceItem, CommitmentTier, CreditBalance, CreditTransaction, Metric, BillingPeriod
 
 # Set up logging
 logging.basicConfig(
@@ -61,9 +62,24 @@ class FubbleDemo:
     def clean_db(self):
         """Clean the database before running the demo."""
         logger.info("Cleaning database...")
-        full_teardown_database()
-        logger.info("Database cleaned")
-
+        # Remove all customers, plans, subscriptions, and events
+        db = next(get_db())
+        # Remove all info from the database
+        db.query(Customer).delete()
+        db.query(Plan).delete()
+        db.query(Subscription).delete()
+        db.query(UsageEvent).delete()
+        db.query(Invoice).delete()
+        db.query(PriceComponent).delete()
+        db.query(InvoiceItem).delete()
+        db.query(CommitmentTier).delete()
+        db.query(CreditBalance).delete()
+        db.query(CreditTransaction).delete()
+        db.query(Metric).delete()
+        db.query(BillingPeriod).delete()
+        # Commit the changes
+        db.commit()
+        logger.info("Database cleanup completed")
 
     def create_customers(self):
         """Create customers in the Fubble system."""
