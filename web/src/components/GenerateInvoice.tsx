@@ -15,14 +15,15 @@ import {
 
 interface GenerateInvoiceProps {
   onInvoicesGenerated?: () => void;
+  customerId: string;
 }
 
-const GenerateInvoice: React.FC<GenerateInvoiceProps> = ({ onInvoicesGenerated }) => {
+const GenerateInvoice: React.FC<GenerateInvoiceProps> = ({ onInvoicesGenerated, customerId }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   
-  const { mutate: generateInvoices, isPending, isError, error } = useGenerateInvoices();
+  const { mutate: generateInvoices, isPending, isError, error } = useGenerateInvoices(customerId);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

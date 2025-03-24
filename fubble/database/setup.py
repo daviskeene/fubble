@@ -36,5 +36,13 @@ def teardown_database():
     logger.info("Database tables dropped successfully")
 
 
+def full_teardown_database():
+    """
+    Tear down the database by dropping all tables and recreating the database.
+    """
+    logger.info("Full teardown database...")
+    teardown_database()
+    setup_database()
+
 if __name__ == "__main__":
     setup_database()

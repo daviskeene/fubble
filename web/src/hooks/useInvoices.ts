@@ -28,12 +28,12 @@ export const useInvoice = (invoiceId: string) => {
   });
 };
 
-export const useGenerateInvoices = () => {
+export const useGenerateInvoices = (customerId: string) => {
   const queryClient = useQueryClient();
   
   return useMutation({
     mutationFn: ({ startDate, endDate }: { startDate: string; endDate: string }) => 
-      api.generateInvoices(startDate, endDate),
+      api.generateInvoices(startDate, endDate, customerId),
     onSuccess: () => {
       // Invalidate all invoice-related queries to ensure real-time updates
       queryClient.invalidateQueries({ queryKey: ['invoices'] });

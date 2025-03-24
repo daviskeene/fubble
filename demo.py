@@ -10,12 +10,12 @@ This script demonstrates how to use Fubble for usage-based billing:
 """
 
 import requests
-import json
-import time
+import os
 from datetime import datetime, timedelta
 import random
 import logging
-from pprint import pprint
+
+from fubble.database.setup import full_teardown_database
 
 # Set up logging
 logging.basicConfig(
@@ -39,6 +39,8 @@ class FubbleDemo:
         """Run the full demonstration workflow."""
         logger.info("Starting Fubble demonstration")
 
+        self.clean_db()
+
         # Step 1: Create customers
         self.create_customers()
 
@@ -55,6 +57,13 @@ class FubbleDemo:
         self.generate_invoices()
 
         logger.info("Fubble demonstration completed successfully")
+
+    def clean_db(self):
+        """Clean the database before running the demo."""
+        logger.info("Cleaning database...")
+        full_teardown_database()
+        logger.info("Database cleaned")
+
 
     def create_customers(self):
         """Create customers in the Fubble system."""
@@ -438,6 +447,7 @@ class FubbleDemo:
             params={
                 "start_date": start_date.isoformat(),
                 "end_date": end_date.isoformat(),
+                "customer_id": self.customers["consumer_1"],
             },
         )
 

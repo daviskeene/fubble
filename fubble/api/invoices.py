@@ -329,7 +329,7 @@ def generate_invoices(
     request: Optional[GenerateInvoicesRequest] = None,
     start_date: Optional[str] = Query(None),
     end_date: Optional[str] = Query(None),
-    customer_id: Optional[int] = Query(None),  # Added customer_id parameter
+    customer_id: int = Query(None),
     db: Session = Depends(get_db),
 ):
     """Generate invoices for all billing periods and/or usage within a date range.

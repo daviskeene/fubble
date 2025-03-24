@@ -116,7 +116,7 @@ const Dashboard: React.FC = () => {
                   />
                 </FlexColumn>
                 <FlexColumn cols={8}>
-                  <GenerateInvoice onInvoicesGenerated={handleInvoicesGenerated} />
+                  <GenerateInvoice onInvoicesGenerated={handleInvoicesGenerated} customerId={selectedCustomerId} />
                 </FlexColumn>
               </FlexContainer>
             </PageSection>

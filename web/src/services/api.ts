@@ -154,11 +154,11 @@ export const getUsageSummary = async (
 };
 
 // Invoice API
-export const generateInvoices = async (startDate: string, endDate: string): Promise<Invoice[]> => {
+export const generateInvoices = async (startDate: string, endDate: string, customerId: string): Promise<Invoice[]> => {
   const encodedStartDate = encodeURIComponent(startDate);
   const encodedEndDate = encodeURIComponent(endDate);
   
-  const url = `${API_BASE_URL}/invoices/generate?start_date=${encodedStartDate}&end_date=${encodedEndDate}`;
+  const url = `${API_BASE_URL}/invoices/generate?start_date=${encodedStartDate}&end_date=${encodedEndDate}&customer_id=${customerId}`;
   console.log("Generating invoices with URL:", url);
   
   const response = await fetch(url, {
