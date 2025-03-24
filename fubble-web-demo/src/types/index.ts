@@ -31,34 +31,41 @@ export interface PriceTier {
 }
 
 export interface PriceComponent {
+  id: number;
+  plan_id: number;
   metric_name: string;
   display_name: string;
-  pricing_type: PricingType;
-  pricing_details: {
-    tiers?: PriceTier[];
-    amount?: number;
-    rate_per_unit?: number;
-    unit?: string;
-  };
+  pricing_type: string; // 'flat', 'tiered', 'volume', or 'package'
+  pricing_details: any;
+  created_at: string;
+  updated_at: string;
 }
 
 // Pricing Plan type
 export type BillingFrequency = 'monthly' | 'quarterly' | 'yearly';
 
 export interface Plan {
-  id?: string;
+  id: number;
   name: string;
   description: string;
-  billing_frequency: BillingFrequency;
+  billing_frequency: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
   price_components: PriceComponent[];
 }
 
 // Subscription type
 export interface Subscription {
   id?: string;
+  customer_id: string;
   plan_id: string;
+  status: string;
   start_date: string;
-  end_date: string | null;
+  end_date?: string;
+  auto_renew: boolean;
+  plan?: Plan;
+  is_active: boolean;
 }
 
 // Usage Event type

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { UsageEvent } from '../types';
+import React, { useState, useEffect } from 'react';
+import { UsageEvent, PriceComponent } from '../types';
 import { useRecordEvent } from '../hooks/useEvents';
+import { useCustomerPlan } from '../hooks/usePlans';
 import { 
   Card, 
   CardHeader, 
@@ -20,13 +21,47 @@ interface EventFormProps {
   onEventRecorded?: () => void;
 }
 
+// Define the full metric options map for reference and display names
+const ALL_METRIC_OPTIONS: { [key: string]: string } = {
+  'api_calls': 'API Calls',
+  'data_transfer_gb': 'Data Transfer (GB)',
+  'compute_time_sec': 'Compute Time (seconds)',
+  'subscription_fee': 'Subscription Fee'
+};
+
 const EventForm: React.FC<EventFormProps> = ({ customerId, onEventRecorded }) => {
-  const [metric, setMetric] = useState('api_calls');
+  const [metric, setMetric] = useState('');
   const [quantity, setQuantity] = useState('1');
   const [properties, setProperties] = useState<Record<string, any>>({});
   const [showSuccess, setShowSuccess] = useState(false);
+  const [metricOptions, setMetricOptions] = useState<Array<{value: string, label: string}>>([]);
   
+  // Fetch the customer's plan
+  const { data: planData, isLoading: isPlanLoading } = useCustomerPlan(customerId);
   const { mutate: recordEvent, isPending } = useRecordEvent();
+  
+  // Extract metric options from the customer's plan price components
+  useEffect(() => {
+    if (planData && planData.plan && planData.plan.price_components) {
+      // Extract unique metric names from price components
+      const metrics = planData.plan.price_components
+        .filter((component: PriceComponent) => component.pricing_type !== 'subscription')
+        .map((component: PriceComponent) => ({
+          value: component.metric_name,
+          label: component.display_name || 
+                 (ALL_METRIC_OPTIONS.hasOwnProperty(component.metric_name) ? 
+                  ALL_METRIC_OPTIONS[component.metric_name as keyof typeof ALL_METRIC_OPTIONS] : 
+                  component.metric_name)
+        }));
+      
+      setMetricOptions(metrics);
+      
+      // Set the first metric as default if available and current metric is not in the options
+      if (metrics.length > 0 && (!metric || !metrics.some(m => m.value === metric))) {
+        setMetric(metrics[0].value);
+      }
+    }
+  }, [planData, metric]);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,13 +89,6 @@ const EventForm: React.FC<EventFormProps> = ({ customerId, onEventRecorded }) =>
       }
     });
   };
-  
-  // Define metric options for the demo
-  const metricOptions = [
-    { value: 'api_calls', label: 'API Calls' },
-    { value: 'data_transfer_gb', label: 'Data Transfer (GB)' },
-    { value: 'compute_time_sec', label: 'Compute Time (seconds)' }
-  ];
   
   // Define property fields based on selected metric
   const renderPropertyFields = () => {
@@ -148,41 +176,57 @@ const EventForm: React.FC<EventFormProps> = ({ customerId, onEventRecorded }) =>
           </Alert>
         )}
         
-        <form onSubmit={handleSubmit}>
-          <FormGroup>
-            <Label>Metric</Label>
-            <Select 
-              value={metric} 
-              onChange={(e) => setMetric(e.target.value)}
-            >
-              {metricOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-          </FormGroup>
-          
-          <FormGroup>
-            <Label>Quantity</Label>
-            <Input 
-              type="number" 
-              value={quantity} 
-              onChange={(e) => setQuantity(e.target.value)}
-              min="0" 
-              step={metric === 'data_transfer_gb' ? '0.01' : '1'}
-              required
-            />
-          </FormGroup>
-          
-          {renderPropertyFields()}
-          
-          <CardFooter>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? 'Recording...' : 'Record Event'}
-            </Button>
-          </CardFooter>
-        </form>
+        {isPlanLoading ? (
+          <div>Loading plan information...</div>
+        ) : metricOptions.length === 0 ? (
+          <Alert variant="info">
+            No billable metrics available in the current plan.
+          </Alert>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <FormGroup>
+              <Label>Metric</Label>
+              <Select 
+                value={metric} 
+                onChange={(e) => {
+                  setMetric(e.target.value);
+                  setProperties({}); // Reset properties when metric changes
+                }}
+              >
+                {!metric && <option value="">Select a metric</option>}
+                {metricOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+            </FormGroup>
+            
+            {metric && (
+              <>
+                <FormGroup>
+                  <Label>Quantity</Label>
+                  <Input 
+                    type="number" 
+                    value={quantity} 
+                    onChange={(e) => setQuantity(e.target.value)}
+                    min="0" 
+                    step={metric === 'data_transfer_gb' ? '0.01' : '1'}
+                    required
+                  />
+                </FormGroup>
+                
+                {renderPropertyFields()}
+                
+                <CardFooter>
+                  <Button type="submit" disabled={isPending}>
+                    {isPending ? 'Recording...' : 'Record Event'}
+                  </Button>
+                </CardFooter>
+              </>
+            )}
+          </form>
+        )}
       </CardContent>
     </Card>
   );

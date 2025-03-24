@@ -219,7 +219,7 @@ class CustomerManager:
             .order_by(Subscription.start_date.desc())
             .all()
         )
-    
+
     def get_customers(self) -> List[Customer]:
         """
         Gets all customers.

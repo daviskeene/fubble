@@ -52,14 +52,60 @@ export const createPlan = async (plan: Plan): Promise<Plan> => {
   return handleResponse<Plan>(response);
 };
 
-export const getPlans = async (): Promise<Plan[]> => {
-  const response = await fetch(`${API_BASE_URL}/plans/`);
-  return handleResponse<Plan[]>(response);
+export const getPlans = async (activeOnly: boolean = true): Promise<any[]> => {
+  const url = `${API_BASE_URL}/plans?active_only=${activeOnly}`;
+  const response = await fetch(url);
+  return handleResponse<any[]>(response);
 };
 
-export const getPlan = async (id: string): Promise<Plan> => {
-  const response = await fetch(`${API_BASE_URL}/plans/${id}`);
-  return handleResponse<Plan>(response);
+export const getPlan = async (planId: string): Promise<any> => {
+  const url = `${API_BASE_URL}/plans/${planId}`;
+  const response = await fetch(url);
+  return handleResponse<any>(response);
+};
+
+export const getCustomerPlan = async (customerId: string): Promise<any> => {
+  try {
+    // First, get the customer's active subscription
+    const subscriptionsUrl = `${API_BASE_URL}/customers/${customerId}/subscriptions`;
+    const subscriptionsResponse = await fetch(subscriptionsUrl);
+    
+    if (!subscriptionsResponse.ok) {
+      console.error('Failed to fetch customer subscriptions:', await subscriptionsResponse.text());
+      return null;
+    }
+    
+    const subscriptions = await subscriptionsResponse.json() as Subscription[];
+    
+    // Find the active subscription (if any)
+    const activeSubscription = subscriptions.find(sub => sub.is_active);
+    
+    if (!activeSubscription) {
+      console.info(`No active subscription found for customer ${customerId}`);
+      return null;
+    }
+    
+    // Then fetch the full plan details
+    const planUrl = `${API_BASE_URL}/plans/${activeSubscription.plan_id}`;
+    const planResponse = await fetch(planUrl);
+    
+    if (!planResponse.ok) {
+      console.error('Failed to fetch plan details:', await planResponse.text());
+      return null;
+    }
+    
+    const plan = await planResponse.json() as Plan;
+    
+    // Return subscription and plan information
+    return {
+      subscription_id: activeSubscription.id,
+      subscription: activeSubscription,
+      plan: plan
+    };
+  } catch (error) {
+    console.error('Error fetching customer plan:', error);
+    return null;
+  }
 };
 
 // Subscription API

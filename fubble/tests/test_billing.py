@@ -449,8 +449,10 @@ class TestBillingEngine(unittest.TestCase):
 
         # Test commitment charge calculation with usage below commitment
         usage_by_metric = {"api_calls": 3000, "storage_gb": 50}
-        commitment_charges = self.billing_engine._calculate_commitment_charges_for_date_range(
-            self.subscription, self.start_date, self.end_date, usage_by_metric
+        commitment_charges = (
+            self.billing_engine._calculate_commitment_charges_for_date_range(
+                self.subscription, self.start_date, self.end_date, usage_by_metric
+            )
         )
 
         # Expected: 5000 committed * $0.008 = $40.0
@@ -460,8 +462,10 @@ class TestBillingEngine(unittest.TestCase):
 
         # Now test with usage above commitment
         usage_by_metric = {"api_calls": 7000, "storage_gb": 50}
-        commitment_charges = self.billing_engine._calculate_commitment_charges_for_date_range(
-            self.subscription, self.start_date, self.end_date, usage_by_metric
+        commitment_charges = (
+            self.billing_engine._calculate_commitment_charges_for_date_range(
+                self.subscription, self.start_date, self.end_date, usage_by_metric
+            )
         )
 
         # Expected actual charge:
@@ -509,7 +513,7 @@ class TestBillingEngine(unittest.TestCase):
         self.assertEqual(result, 0.0)
         self.assertEqual(self.credit_balance.remaining_amount, 20.0)
         self.assertEqual(self.credit_balance.status, CreditStatus.ACTIVE)
-    
+
     def test_generate_invoice_for_date_range_with_subscription(self):
         """Test generating an invoice for a date range with a specified subscription."""
         # Set up mocks for database queries
@@ -517,26 +521,26 @@ class TestBillingEngine(unittest.TestCase):
         mock_customer_filter = MagicMock()
         mock_customer_filter.first.return_value = self.customer
         mock_customer_query.filter.return_value = mock_customer_filter
-        
+
         mock_subscription_query = MagicMock()
         mock_subscription_filter = MagicMock()
         mock_subscription_filter.first.return_value = self.subscription
         mock_subscription_query.filter.return_value = mock_subscription_filter
-        
+
         # Setup mock for usage calculation
         self.billing_engine.calculate_usage_for_date_range = MagicMock(
             return_value={"api_calls": 1500, "storage_gb": 200}
         )
-        
+
         # Setup mock for credit application
         self.billing_engine._apply_credits_to_invoice = MagicMock(return_value=95.0)
-        
+
         # Mock returned invoice
         mock_invoice = MagicMock(spec=Invoice, id=1)
         self.db.add = MagicMock()
         self.db.flush = MagicMock()
         self.db.commit = MagicMock()
-        
+
         # Configure db.query to return different mocks based on the queried class
         def mock_query(queried_class):
             if queried_class == Customer:
@@ -552,50 +556,47 @@ class TestBillingEngine(unittest.TestCase):
                 return mock_metric_query
             else:
                 return MagicMock()
-        
+
         self.db.query = mock_query
-        
+
         # Mock commitment charges calculation
         self.billing_engine._calculate_commitment_charges_for_date_range = MagicMock(
             return_value={1: 40.0}  # Commitment charge for api_calls metric
         )
-        
+
         # Test the method
         start_date = datetime(2023, 3, 1)
         end_date = datetime(2023, 3, 31)
-        
+
         invoice = self.billing_engine.generate_invoice_for_date_range(
-            customer_id=1,
-            start_date=start_date,
-            end_date=end_date,
-            subscription_id=1
+            customer_id=1, start_date=start_date, end_date=end_date, subscription_id=1
         )
-        
+
         # Verify invoice was created with appropriate properties
         self.db.add.assert_called()
         self.db.flush.assert_called()
         self.db.commit.assert_called()
-        
+
         # Verify usage calculation was called
         self.billing_engine.calculate_usage_for_date_range.assert_called_with(
             1, start_date, end_date
         )
-        
+
         # Verify commitment calculation was called
         self.billing_engine._calculate_commitment_charges_for_date_range.assert_called()
-        
+
         # Verify credits were applied
         self.billing_engine._apply_credits_to_invoice.assert_called()
-    
+
     def test_generate_invoice_for_billing_period(self):
         """Test generating an invoice for a billing period."""
         # Set up usage data that will trigger different pricing calculations
         usage_data = {
-            "api_calls": 1500,          
-            "storage_gb": 200,         
-            "subscription_fee": 1,      # Subscription fee should have quantity=1
+            "api_calls": 1500,
+            "storage_gb": 200,
+            "subscription_fee": 1,  # Subscription fee should have quantity=1
         }
-        
+
         # Predefined charges for assertions
         expected_charges = {
             "api_calls": 12.5,
@@ -603,12 +604,12 @@ class TestBillingEngine(unittest.TestCase):
             "subscription_fee": 29.99,
         }
         expected_total = sum(expected_charges.values())
-        
+
         # Set up our mocks
         self.billing_engine.calculate_usage_for_billing_period = MagicMock(
             return_value=usage_data
         )
-        
+
         # Create a mock invoice that will be returned by generate_invoice_for_date_range
         mock_invoice = MagicMock(spec=Invoice)
         mock_invoice.id = 1
@@ -618,7 +619,7 @@ class TestBillingEngine(unittest.TestCase):
         mock_invoice.issue_date = datetime.utcnow()
         mock_invoice.due_date = datetime.utcnow() + timedelta(days=30)
         mock_invoice.invoice_number = "INV-20230401123456-1-20230301"
-        
+
         # Create mock invoice items
         mock_invoice.invoice_items = []
         for metric_name, amount in expected_charges.items():
@@ -631,55 +632,67 @@ class TestBillingEngine(unittest.TestCase):
             item.amount = amount
             item.description = f"Test item for {metric_name}"
             mock_invoice.invoice_items.append(item)
-        
+
         self.billing_engine.generate_invoice_for_date_range = MagicMock(
             return_value=mock_invoice
         )
-        
+
         self.db.commit = MagicMock()
-        
+
         # Test the method
         result_invoice = self.billing_engine.generate_invoice(self.billing_period)
-        
+
         # ----- DETAILED VALIDATION -----
-        
+
         # 1. Verify usage calculation was called for the billing period
         self.billing_engine.calculate_usage_for_billing_period.assert_called_with(
             self.billing_period
         )
-        
+
         # 2. Verify generate_invoice_for_date_range was called with the right parameters
         self.billing_engine.generate_invoice_for_date_range.assert_called_with(
             customer_id=self.customer.id,
             start_date=self.billing_period.start_date,
             end_date=self.billing_period.end_date,
-            subscription_id=self.subscription.id
+            subscription_id=self.subscription.id,
         )
-        
+
         # 3. Verify billing period's invoice_id was properly set
         self.assertEqual(self.billing_period.invoice_id, mock_invoice.id)
-        
+
         # 4. Verify the invoice notes were updated to reflect the billing period
         self.assertIn(str(self.subscription.id), mock_invoice.notes)
         self.assertIn(self.plan.name, mock_invoice.notes)
         self.assertIn("Billing period", mock_invoice.notes)
-        
+
         # 5. Verify db.commit was called to persist the changes
         self.db.commit.assert_called()
-        
+
         # 6. Verify the returned invoice matches our mock
         self.assertEqual(result_invoice, mock_invoice)
-        
+
         # 7. Verify the total invoice amount matches our expected total
         self.assertEqual(result_invoice.amount, expected_total)
-        
+
         # 8. Check the invoice items were preserved
-        self.assertEqual(len(result_invoice.invoice_items), len(mock_invoice.invoice_items))
+        self.assertEqual(
+            len(result_invoice.invoice_items), len(mock_invoice.invoice_items)
+        )
         for metric_name, amount in expected_charges.items():
-            matching_items = [item for item in result_invoice.invoice_items if item.metric_name == metric_name]
-            self.assertEqual(len(matching_items), 1, f"Expected exactly one invoice item for {metric_name}")
+            matching_items = [
+                item
+                for item in result_invoice.invoice_items
+                if item.metric_name == metric_name
+            ]
+            self.assertEqual(
+                len(matching_items),
+                1,
+                f"Expected exactly one invoice item for {metric_name}",
+            )
             item = matching_items[0]
-            self.assertEqual(item.amount, amount, f"Amount for {metric_name} is incorrect")
+            self.assertEqual(
+                item.amount, amount, f"Amount for {metric_name} is incorrect"
+            )
 
 
 if __name__ == "__main__":

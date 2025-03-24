@@ -44,8 +44,8 @@ export const Card = styled.div`
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 25px rgba(0, 0, 0, 0.1);
   }
 
   overflow: auto;
@@ -340,7 +340,7 @@ export const InvoiceTotal = styled.div`
 // Dashboard specific components
 export const DashboardHeader = styled.header`
   margin-bottom: 2rem;
-  padding: 1.5rem;
+  padding: 1rem;
   background-color: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   display: flex;
@@ -355,7 +355,7 @@ export const DashboardHeader = styled.header`
 `;
 
 export const DashboardTitle = styled.h1`
-  font-size: 1.75rem;
+  font-size: 1rem;
   color: #1e293b;
   margin: 0;
   font-weight: 600;
@@ -367,6 +367,7 @@ export const DashboardTitle = styled.h1`
 
 export const PageSection = styled.section`
   margin-bottom: 2rem;
+  padding: 0 !important;
 `;
 
 export const SectionTitle = styled.h2`
@@ -374,7 +375,8 @@ export const SectionTitle = styled.h2`
   color: #334155;
   margin-bottom: 1.5rem;
   font-weight: 600;
-  text-align: center;
+  text-align: left;
+  padding-left: 0.75rem !important;
 `;
 
 export const DashboardNav = styled.div`

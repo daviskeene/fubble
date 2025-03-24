@@ -6,6 +6,7 @@ import EventForm from '../components/EventForm';
 import UsageSummary from '../components/UsageSummary';
 import GenerateInvoice from '../components/GenerateInvoice';
 import InvoiceList from '../components/InvoiceList';
+import PlanDetails from '../components/PlanDetails';
 import { 
   Container, 
   DashboardHeader, 
@@ -80,6 +81,15 @@ const Dashboard: React.FC = () => {
         
         {selectedCustomerId && (
           <>
+            <PageSection>
+              <SectionTitle>Customer Information</SectionTitle>
+              <FlexContainer>
+                <FlexColumn cols={24}>
+                  <PlanDetails customerId={selectedCustomerId} />
+                </FlexColumn>
+              </FlexContainer>
+            </PageSection>
+            
             <PageSection>
               <SectionTitle>Usage & Events</SectionTitle>
               <FlexContainer>
