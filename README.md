@@ -13,9 +13,10 @@ FUBBLE is a flexible, lightweight usage-based billing system designed to handle 
 
 ### Screenshots
 
-<img width="1023" alt="Screenshot 2025-03-24 at 1 09 46 AM" src="https://github.com/user-attachments/assets/2c51864d-67be-46f6-85c4-a1ff5b67cb06" />
-<img width="513" alt="Screenshot 2025-03-24 at 1 09 53 AM" src="https://github.com/user-attachments/assets/ef36607a-25a2-46b3-8fc3-0cf2a8e5fa97" />
-<img width="767" alt="Screenshot 2025-03-24 at 1 09 59 AM" src="https://github.com/user-attachments/assets/639782ee-4e0d-4db5-9b41-69537eb5cc8b" />
+
+<img width="1028" alt="Screenshot 2025-03-24 at 10 35 52 AM" src="https://github.com/user-attachments/assets/0f82a07f-2309-45d7-be50-e5553193562d" />
+<img width="513" alt="Screenshot 2025-03-24 at 10 35 38 AM" src="https://github.com/user-attachments/assets/66bddb79-75b9-4ef4-a9f9-52f63f69347e" />
+<img width="763" alt="Screenshot 2025-03-24 at 10 35 58 AM" src="https://github.com/user-attachments/assets/d68444be-840f-4235-b231-56b67bf193c3" />
 
 
 ## Getting Started
