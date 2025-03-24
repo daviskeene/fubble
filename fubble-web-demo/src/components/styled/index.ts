@@ -21,12 +21,14 @@ export const FlexContainer = styled.div`
   margin-bottom: 2rem;
 `;
 
-export const FlexColumn = styled.div<{ width?: string }>`
-  flex: ${props => props.width || '1'};
-  min-width: 300px;
-  width: 100%;
+export const FlexColumn = styled.div<{ width?: string; cols?: number }>`
+  /* If cols is provided, calculate percentage width based on 24-column grid */
+  flex: ${props => props.cols ? 'none' : (props.width || '1')};
+  width: ${props => props.cols ? `calc(${(props.cols / 24) * 100}% - 1.5rem)` : '100%'};
+  min-width: ${props => props.cols ? '0' : '300px'};
   
   @media (max-width: 768px) {
+    width: 100%;
     min-width: 100%;
   }
 `;
@@ -46,7 +48,7 @@ export const Card = styled.div`
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
   }
 
-  overflow: scroll;
+  overflow: auto;
   text-overflow: ellipsis;
 `;
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useInvoices, useCustomerInvoices } from '../hooks/useInvoices';
+import { useCustomerInvoices } from '../hooks/useInvoices';
 import { 
   Card, 
   CardHeader, 
