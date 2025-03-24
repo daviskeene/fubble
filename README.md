@@ -11,6 +11,13 @@ FUBBLE is a flexible, lightweight usage-based billing system designed to handle 
 - Generate accurate invoices based on consumption
 - Analyze billing data and usage patterns
 
+### Screenshots
+
+<img width="1023" alt="Screenshot 2025-03-24 at 1 09 46 AM" src="https://github.com/user-attachments/assets/2c51864d-67be-46f6-85c4-a1ff5b67cb06" />
+<img width="513" alt="Screenshot 2025-03-24 at 1 09 53 AM" src="https://github.com/user-attachments/assets/ef36607a-25a2-46b3-8fc3-0cf2a8e5fa97" />
+<img width="767" alt="Screenshot 2025-03-24 at 1 09 59 AM" src="https://github.com/user-attachments/assets/639782ee-4e0d-4db5-9b41-69537eb5cc8b" />
+
+
 ## Getting Started
 
 ### Prerequisites
