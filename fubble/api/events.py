@@ -90,7 +90,7 @@ def track_event(event_data: EventCreate, db: Session = Depends(get_db)):
         customer_id=event_data.customer_id,
         metric_name=event_data.metric_name,
         quantity=event_data.quantity,
-        event_time=event_time,
+        event_time=event_time if event_time else datetime.now(),
         properties=event_data.properties,
     )
 
@@ -135,7 +135,7 @@ def batch_track_events(batch_data: BatchEventCreate, db: Session = Depends(get_d
                 "customer_id": event_data.customer_id,
                 "metric_name": event_data.metric_name,
                 "quantity": event_data.quantity,
-                "event_time": event_time,
+                "event_time": event_time if event_time else datetime.now(),
                 "properties": event_data.properties,
             }
         )

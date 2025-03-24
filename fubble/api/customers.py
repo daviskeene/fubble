@@ -124,6 +124,11 @@ class SubscriptionResponse(BaseModel):
 
         return values
 
+@router.get("/")
+def get_customers(db: Session = Depends(get_db)):
+    """Get all customers."""
+    customer_manager = CustomerManager(db)
+    return customer_manager.get_customers()
 
 @router.post("/", response_model=CustomerResponse, status_code=status.HTTP_201_CREATED)
 def create_customer(customer_data: CustomerCreate, db: Session = Depends(get_db)):
